@@ -6,14 +6,16 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 import java.util.ArrayList
 
-class ReactNativeExternalScannerViewPackage : ReactPackage {
+class ReactNativeExternalScannerPackage : ReactPackage {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     val viewManagers: MutableList<ViewManager<*, *>> = ArrayList()
-    viewManagers.add(ReactNativeExternalScannerViewManager())
+    viewManagers.add(ReactNativeExternalScannerViewManager(reactContext))
     return viewManagers
   }
 
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return emptyList()
+    val modules = mutableListOf<NativeModule>()
+    modules.add(ReactNativeExternalScannerModule(reactContext))
+    return modules
   }
 }
