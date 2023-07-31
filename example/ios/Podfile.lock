@@ -1257,7 +1257,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  brainylab-react-native-external-scanner: 69549c0d4e9159297daabb4925ae5a71d57520f8
+  brainylab-react-native-external-scanner: 44dc13b83a5817d2070fe945dc5b161b92f0c977
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 4cce221dd782d3ff7c4172167bba09d58af67ccb
