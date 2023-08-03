@@ -44,12 +44,6 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
     })
   }
 
-  override fun onDetachedFromWindow() {
-    Log.i("APP SPE", "clea detached view")
-    super.onDetachedFromWindow()
-    setViewClearFocus()
-  }
-
   fun setChildView(view: View) {
       if (childView != null) {
           removeView(childView)
