@@ -98,7 +98,7 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
                             val eventDispatcherValue = getEventDispatcherForReactTag(reactContext, id)
 
                             val eventData = Arguments.createMap()
-                            eventData.putString("value", codeScanned.toString())
+                            eventData.putString("value", codeScanned.toString().lowercase())
 
                             eventDispatcherValue?.dispatchEvent(ExternalScannerViewEvent(id, "topOnValueScanned", eventData))
                             codeScanned.clear()
@@ -108,7 +108,7 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
                             val eventDispatcherSingle = getEventDispatcherForReactTag(reactContext, id)
 
                             val keyChar = event.unicodeChar.toChar()
-                            val valueInString = keyChar.toString()
+                            val valueInString = keyChar.toString().lowercase()
                             codeScanned.append(valueInString)
 
                              val eventData = Arguments.createMap()
