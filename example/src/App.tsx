@@ -29,7 +29,10 @@ function Item({index}: any) {
       }}
       onCodeScanned={e => {
         if (e.nativeEvent.value) {
-          setValueText(e.nativeEvent.value);
+          if (e.nativeEvent.value) {
+            setValueText(e.nativeEvent.value);
+            console.log(e.nativeEvent.value === 'A000A');
+          }
         }
       }}>
       <View>

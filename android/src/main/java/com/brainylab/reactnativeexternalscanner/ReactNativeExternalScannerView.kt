@@ -1,5 +1,6 @@
 package com.brainylab.reactnativeexternalscanner
 
+import java.nio.charset.Charset
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log;
@@ -81,6 +82,20 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
     return UIManagerHelper.getEventDispatcherForReactTag(reactContext, tag)
   }
 
+  private fun getUTF8Char(event: KeyEvent): String? {
+    val keyCode = event.keyCode
+    val action = event.action
+    val unicodeChar = event.unicodeChar.toChar()
+
+    if (action == KeyEvent.ACTION_DOWN && keyCode != KeyEvent.KEYCODE_UNKNOWN) {
+        if (unicodeChar != 0.toChar()) {
+            val utf8Bytes = unicodeChar.toString().toByteArray(Charset.forName("UTF-8"))
+            return String(utf8Bytes, Charset.forName("UTF-8"))
+        }
+    }
+    return null
+}
+
   fun setViewAddFocus() {
     Log.i("APP SPE", "view focus")
     isFocusableInTouchMode = true
@@ -105,16 +120,16 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
                             true
                         }
                         else -> {
-                            val eventDispatcherSingle = getEventDispatcherForReactTag(reactContext, id)
+                            val utf8Char = getUTF8Char(event)
+                            if (utf8Char != null) {
+                                codeScanned.append(utf8Char)
 
-                            val keyChar = event.unicodeChar.toChar()
-                            val valueInString = keyChar.toString()
-                            codeScanned.append(valueInString)
+                                val eventDispatcherSingle = getEventDispatcherForReactTag(reactContext, id)
+                                val eventData = Arguments.createMap()
+                                eventData.putString("value", utf8Char)
 
-                             val eventData = Arguments.createMap()
-                            eventData.putString("value", valueInString)
-
-                            eventDispatcherSingle?.dispatchEvent(ExternalScannerViewEvent(id, "topOnSingleValueScanned", eventData))
+                                eventDispatcherSingle?.dispatchEvent(ExternalScannerViewEvent(id, "topOnSingleValueScanned", eventData))
+                            }
                             true
                         }
                     }
