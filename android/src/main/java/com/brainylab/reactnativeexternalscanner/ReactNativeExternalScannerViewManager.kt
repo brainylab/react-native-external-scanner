@@ -10,6 +10,7 @@ import com.facebook.react.viewmanagers.ReactNativeExternalScannerViewManagerDele
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.soloader.SoLoader
 import com.facebook.react.common.MapBuilder
+import android.util.Log;
 
 @ReactModule(name = ReactNativeExternalScannerViewManager.NAME)
 class ReactNativeExternalScannerViewManager(private val mCallerContext: ReactApplicationContext) : ViewGroupManager<ReactNativeExternalScannerView>(),
@@ -36,7 +37,11 @@ class ReactNativeExternalScannerViewManager(private val mCallerContext: ReactApp
 
   @ReactProp(name = "active")
   override fun setActive(view: ReactNativeExternalScannerView, active: Boolean) {
-    view.activeInterceptor = active
+    if(active) {
+      view.setViewAddFocus()
+    } else {
+      view.setViewClearFocus()
+    }
   }
 
   override fun getExportedCustomDirectEventTypeConstants(): Map<String?, Any> {
@@ -46,6 +51,9 @@ class ReactNativeExternalScannerViewManager(private val mCallerContext: ReactApp
             )
             .put("topOnSingleValueScanned",
               MapBuilder.of("registrationName", "onSingleCodeScanned")
+            )
+            .put("topOnWithoutFocus",
+              MapBuilder.of("registrationName", "onWithoutFocus")
             ).build()
   }
 

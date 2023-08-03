@@ -10,6 +10,7 @@ interface NativeProps extends ViewProps {
   active?: boolean;
   onCodeScanned?: DirectEventHandler<Event>;
   onSingleCodeScanned?: DirectEventHandler<Event>;
+  onWithoutFocus?: DirectEventHandler<Event>;
 }
 export default codegenNativeComponent<NativeProps>(
   'ReactNativeExternalScannerView',

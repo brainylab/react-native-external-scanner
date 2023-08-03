@@ -6,8 +6,8 @@ import {
   useExternalScanner,
 } from '@brainylab/react-native-external-scanner';
 
-export default function App() {
-  const [active, setActive] = React.useState(true);
+function Item({index}: any) {
+  const [active, setActive] = React.useState(false);
   const [valueText, setValueText] = React.useState('');
 
   const {scannerConnected} = useExternalScanner();
@@ -22,6 +22,10 @@ export default function App() {
         alignItems: 'center',
         width: '100%',
         height: '100%',
+      }}
+      onWithoutFocus={() => {
+        console.log(index);
+        setActive(false);
       }}
       onCodeScanned={e => {
         if (e.nativeEvent.value) {
@@ -54,5 +58,14 @@ export default function App() {
         </Text>
       </TouchableOpacity>
     </ExternalScanner>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Item />
+      <Item />
+    </>
   );
 }

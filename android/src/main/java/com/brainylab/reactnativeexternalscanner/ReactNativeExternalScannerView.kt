@@ -2,25 +2,52 @@ package com.brainylab.reactnativeexternalscanner
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log;
 import android.view.View
-import android.view.ViewGroup
 import android.view.KeyEvent
+import android.view.ViewGroup
 import android.view.InputDevice
+import android.view.View.OnFocusChangeListener
 import android.view.InputDevice.SOURCE_KEYBOARD
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.WritableMap
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.events.EventDispatcher
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.uimanager.events.EventDispatcher
+import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+
 
 class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
   private var codeScanned: StringBuilder = StringBuilder()
   private var childView: View? = null
   private var hasExternalKeyboard: Boolean = false
   private var mContext: ReactApplicationContext? = null
-  var activeInterceptor: Boolean = true
+  private var keyListener: OnKeyListener? = null
+
+  init {
+    setOnKeyListener(null)
+
+    setOnFocusChangeListener(OnFocusChangeListener { _, hasFocus ->
+    Log.i("APP SPE", "not focus")
+          if (!hasFocus) {
+            val reactContext = context as ReactContext
+
+            val eventDispatcher = getEventDispatcherForReactTag(reactContext, id)
+            val eventData = Arguments.createMap()
+            eventData.putString("value", "")
+
+            eventDispatcher?.dispatchEvent(ExternalScannerViewEvent(id, "topOnWithoutFocus", eventData))
+
+          }
+    })
+  }
+
+  override fun onDetachedFromWindow() {
+    Log.i("APP SPE", "clea detached view")
+    super.onDetachedFromWindow()
+    setViewClearFocus()
+  }
 
   fun setChildView(view: View) {
       if (childView != null) {
@@ -29,12 +56,6 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
       childView = view
       addView(view)
   }
-
-  fun setChildParams(params: ViewGroup.LayoutParams) {
-      childView?.layoutParams = params
-      requestLayout()
-  }
-
 
   override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         childView?.let { child ->
@@ -52,46 +73,68 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
   }
 
   fun checkForExternalKeyboard(mContext: ReactApplicationContext) {
-        val isExternal = ExternalScannerUtil.hasExternalScanner(mContext)
-
-        hasExternalKeyboard = isExternal;
+    val isExternal = ExternalScannerUtil.hasExternalScanner(mContext)
+    hasExternalKeyboard = isExternal;
   }
 
   private fun getEventDispatcherForReactTag(reactContext: ReactContext, tag: Int): EventDispatcher? {
     return UIManagerHelper.getEventDispatcherForReactTag(reactContext, tag)
   }
 
-
-  init {
+  fun setViewAddFocus() {
+    Log.i("APP SPE", "view focus")
     isFocusableInTouchMode = true
     requestFocus()
+    // Adicionar o OnKeyListener quando o setViewFocus for chamado
+        if (keyListener == null) {
+            keyListener = OnKeyListener { _, keyCode, event ->
+                if (!hasExternalKeyboard) return@OnKeyListener false
 
-    setOnKeyListener { _, keyCode, event ->
-            if (!hasExternalKeyboard) return@setOnKeyListener false
+                val reactContext = context as ReactContext
 
-            val reactContext = context as ReactContext
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    when (keyCode) {
+                        KeyEvent.KEYCODE_ENTER -> {
+                            val eventDispatcherValue = getEventDispatcherForReactTag(reactContext, id)
 
-            if (event.action == KeyEvent.ACTION_DOWN && activeInterceptor) {
-                when (keyCode) {
-                    KeyEvent.KEYCODE_ENTER -> {
-                        val eventDispatcherValue = getEventDispatcherForReactTag(reactContext, id)
-                        eventDispatcherValue?.dispatchEvent(ExternalScannerViewValueEvent(id, codeScanned.toString()))
-                        codeScanned = StringBuilder() // clear string
-                        true
+                            val eventData = Arguments.createMap()
+                            eventData.putString("value", codeScanned.toString())
+
+                            eventDispatcherValue?.dispatchEvent(ExternalScannerViewEvent(id, "topOnValueScanned", eventData))
+                            codeScanned.clear()
+                            true
+                        }
+                        else -> {
+                            val eventDispatcherSingle = getEventDispatcherForReactTag(reactContext, id)
+
+                            val keyChar = event.unicodeChar.toChar()
+                            val valueInString = keyChar.toString()
+                            codeScanned.append(valueInString)
+
+                             val eventData = Arguments.createMap()
+                            eventData.putString("value", valueInString)
+
+                            eventDispatcherSingle?.dispatchEvent(ExternalScannerViewEvent(id, "topOnSingleValueScanned", eventData))
+                            true
+                        }
                     }
-                    else -> {
-                        val keyChar = event.unicodeChar.toChar()
-                        val valueInString = keyChar.toString()
-                        codeScanned.append(valueInString)
-
-                        val eventDispatcherSingle = getEventDispatcherForReactTag(reactContext, id)
-                        eventDispatcherSingle?.dispatchEvent(ExternalScannerViewSingleValueEvent(id, valueInString))
-                        true
-                    }
+                } else {
+                    false
                 }
-            } else {
-                false
             }
+            setOnKeyListener(keyListener)
+        }
+  }
+
+  fun setViewClearFocus() {
+    Log.i("APP SPE", "view clear")
+    isFocusableInTouchMode = false
+    clearFocus()
+
+    // Remover o OnKeyListener quando o setClearFocus for chamado
+    if (keyListener != null) {
+      setOnKeyListener(null)
+      keyListener = null
     }
   }
 }

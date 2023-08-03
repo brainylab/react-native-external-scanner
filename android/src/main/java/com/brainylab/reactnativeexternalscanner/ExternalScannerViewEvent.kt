@@ -6,9 +6,9 @@ import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTModernEventEmitter
 
 
-class ExternalScannerViewValueEvent(viewId: Int, private val codeValue: String): Event<ExternalScannerViewValueEvent>(viewId) {
+class ExternalScannerViewEvent(viewId: Int, private val eventName: String, private val eventData: WritableMap): Event<ExternalScannerViewEvent>(viewId) {
     override fun getEventName(): String {
-        return "topOnValueScanned"
+        return eventName
     }
 
     override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter?) {
@@ -21,8 +21,6 @@ class ExternalScannerViewValueEvent(viewId: Int, private val codeValue: String):
     }
 
     override fun getEventData(): WritableMap {
-        val event: WritableMap = Arguments.createMap()
-        event.putString("value", codeValue)
-        return event
+      return eventData
     }
 }
