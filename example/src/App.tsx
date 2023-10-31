@@ -6,7 +6,11 @@ import {
   useExternalScanner,
 } from '@brainylab/react-native-external-scanner';
 
-function Item({index}: any) {
+type ItemProps = {
+  index: number;
+};
+
+function Item({index}: ItemProps) {
   const [active, setActive] = React.useState(false);
   const [valueText, setValueText] = React.useState('');
 
@@ -27,13 +31,12 @@ function Item({index}: any) {
         console.log(index);
         setActive(false);
       }}
-      onCodeScanned={e => {
-        if (e.nativeEvent.value) {
-          if (e.nativeEvent.value) {
-            setValueText(e.nativeEvent.value);
-            console.log(e.nativeEvent.value === 'A000A');
-          }
-        }
+      onCodeScanned={value => {
+        setValueText(value);
+        console.log(value === 'A000A');
+      }}
+      onSingleCodeScanned={value => {
+        console.log(value);
       }}>
       <View>
         <Text style={{textAlign: 'center', marginBottom: 10}}>
@@ -67,8 +70,8 @@ function Item({index}: any) {
 export default function App() {
   return (
     <>
-      <Item />
-      <Item />
+      <Item index={1} />
+      <Item index={2} />
     </>
   );
 }
