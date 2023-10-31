@@ -1,6 +1,6 @@
 {
   "name": "@brainylab/react-native-external-scanner",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "React Native External Scanner",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
