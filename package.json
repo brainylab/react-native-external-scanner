@@ -46,7 +46,10 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/brainylab/react-native-external-scanner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brainylab/react-native-external-scanner.git"
+  },
   "author": "André Felipe Schulle <dev@brainylab.com.br> (https://github.com/brainylab)",
   "license": "MIT",
   "bugs": {
