@@ -40,9 +40,11 @@ class ReactNativeExternalScannerViewManager(private val mCallerContext: ReactApp
     if(active) {
       view.isEnabled = true
       view.setViewAddFocus()
+      view.alpha = 1f
     } else {
-      view.isEnabled = false
       view.setViewClearFocus()
+      view.isEnabled = false
+      view.alpha = 1f
     }
   }
 
