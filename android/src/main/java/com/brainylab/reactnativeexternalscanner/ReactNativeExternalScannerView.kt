@@ -1,7 +1,6 @@
 package com.brainylab.reactnativeexternalscanner
 
 import android.content.Context
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -24,8 +23,7 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
     setOnKeyListener(null)
 
     setOnFocusChangeListener(
-      OnFocusChangeListener { _, hasFocus ->
-        Log.i("APP SPE", "not focus")
+      OnFocusChangeListener { view, hasFocus ->
         if (!hasFocus) {
           val reactContext = context as ReactContext
 
@@ -95,10 +93,9 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
   }
 
   fun setViewAddFocus() {
-    Log.i("APP SPE", "view focus")
     isFocusableInTouchMode = true
     requestFocus()
-    // Adicionar o OnKeyListener quando o setViewFocus for chamado
+
     if (keyListener == null) {
       keyListener =
         OnKeyListener { _, keyCode, event ->
@@ -141,11 +138,9 @@ class ReactNativeExternalScannerView(context: Context) : ViewGroup(context) {
   }
 
   fun setViewClearFocus() {
-    Log.i("APP SPE", "view clear")
     isFocusableInTouchMode = false
     clearFocus()
 
-    // Remover o OnKeyListener quando o setClearFocus for chamado
     if (keyListener != null) {
       setOnKeyListener(null)
       keyListener = null

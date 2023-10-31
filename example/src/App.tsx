@@ -33,7 +33,6 @@ function Item({index}: ItemProps) {
       }}
       onCodeScanned={value => {
         setValueText(value);
-        console.log(value === 'A000A');
       }}
       onSingleCodeScanned={value => {
         console.log(value);

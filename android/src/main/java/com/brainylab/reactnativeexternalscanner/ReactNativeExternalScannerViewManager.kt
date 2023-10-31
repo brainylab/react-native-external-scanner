@@ -38,8 +38,10 @@ class ReactNativeExternalScannerViewManager(private val mCallerContext: ReactApp
   @ReactProp(name = "active")
   override fun setActive(view: ReactNativeExternalScannerView, active: Boolean) {
     if(active) {
+      view.isEnabled = true
       view.setViewAddFocus()
     } else {
+      view.isEnabled = false
       view.setViewClearFocus()
     }
   }
